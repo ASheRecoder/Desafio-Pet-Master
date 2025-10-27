@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrición Canina y Felina - Capacitación Interactiva</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 30%, #FFE4B5 60%, #FFA07A 100%);
+            min-height: 100%;
+            color: #333;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .game-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #FF6347, #FF1493, #9370DB, #4169E1, #32CD32);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .game-board {
+            padding: 30px;
+            display: grid;
+            gap: 30px;
+        }
+
+        .players-section {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .player-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid #dee2e6;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .player-card.active {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.2);
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            border: 2px solid #fff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .player1-card .player-avatar {
+            background: linear-gradient(45deg, #FF4500, #FF6347);
+        }
+
+        .player2-card .player-avatar {
+            background: linear-gradient(45deg, #9370DB, #8A2BE2);
+        }
+
+        .player3-card .player-avatar {
+            background: linear-gradient(45deg, #32CD32, #228B22);
+        }
+
+        .player4-card .player-avatar {
+            background: linear-gradient(45deg, #FF8C00, #FF4500);
+        }
+
+        .player5-card .player-avatar {
+            background: linear-gradient(45deg, #FF1493, #DC143C);
+        }
+
+        .player6-card .player-avatar {
+            background: linear-gradient(45deg, #228B22, #32CD32);
+        }
+
+        .player7-card .player-avatar {
+            background: linear-gradient(45deg, #FF8C00, #FF4500);
+        }
+
+        .player-card h3 {
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .player-card p {
+            margin: 3px 0;
+            font-size: 0.85rem;
+        }
+
+        .interactive-board {
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 40%, #90EE90 100%);
+            padding: 30px;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-board::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, #228B22 2px, transparent 2px),
+                radial-gradient(circle at 80% 20%, #228B22 1px, transparent 1px),
+                radial-gradient(circle at 40% 40%, #228B22 1px, transparent 1px),
+                radial-gradient(circle at 60% 90%, #228B22 2px, transparent 2px),
+                radial-gradient(circle at 90% 70%, #228B22 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px, 40px 40px, 60px 60px, 35px 35px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .park-animals {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .park-animal-1 {
+            top: 10%;
+            left: 5%;
+            animation: bounce 3s infinite ease-in-out;
+        }
+
+        .park-animal-2 {
+            top: 20%;
+            right: 8%;
+            animation: bounce 4s infinite ease-in-out 0.5s;
+        }
+
+        .park-animal-3 {
+            bottom: 15%;
+            left: 10%;
+            animation: bounce 3.5s infinite ease-in-out 1s;
+        }
+
+        .park-animal-4 {
+            bottom: 25%;
+            right: 15%;
+            animation: bounce 4.5s infinite ease-in-out 1.5s;
+        }
+
+        .park-animal-5 {
+            top: 50%;
+            left: 2%;
+            animation: bounce 3.2s infinite ease-in-out 2s;
+        }
+
+        .park-animal-6 {
+            top: 60%;
+            right: 3%;
+            animation: bounce 3.8s infinite ease-in-out 0.8s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+
+        .board-path {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 15px;
+            position: relative;
+        }
+
+        .path-cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #FFE4E1, #F0F8FF);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: 3px solid #FF69B4;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .path-cell:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .path-cell.start {
+            background: linear-gradient(45deg, #32CD32, #00FF7F);
+            color: white;
+            font-size: 0.9rem;
+            border-color: #228B22;
+            box-shadow: 0 5px 15px rgba(50, 205, 50, 0.4);
+        }
+
+        .path-cell.finish {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #8B4513;
+            font-size: 0.9rem;
+            border-color: #FF8C00;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .path-cell.special {
+            background: linear-gradient(45deg, #FF1493, #FF69B4);
+            color: white;
+            border-color: #DC143C;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+        }
+
+        .path-cell.bonus {
+            background: linear-gradient(45deg, #00CED1, #40E0D0);
+            color: white;
+            border-color: #008B8B;
+            box-shadow: 0 5px 15px rgba(0, 206, 209, 0.4);
+        }
+
+        .cell-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .cell-number {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .player-piece {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            z-index: 10;
+            transition: all 0.5s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .player-piece.player1 {
+            background: linear-gradient(45deg, #FF4500, #FF6347);
+            top: -8px;
+            left: -8px;
+        }
+
+        .player-piece.player2 {
+            background: linear-gradient(45deg, #9370DB, #8A2BE2);
+            top: -8px;
+            right: -8px;
+        }
+
+        .player-piece.player3 {
+            background: linear-gradient(45deg, #32CD32, #228B22);
+            bottom: -8px;
+            left: -8px;
+        }
+
+        .player-piece.player4 {
+            background: linear-gradient(45deg, #FF8C00, #FF4500);
+            bottom: -8px;
+            right: -8px;
+        }
+
+        .player-piece.player5 {
+            background: linear-gradient(45deg, #FF1493, #DC143C);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .player-piece.player6 {
+            background: linear-gradient(45deg, #228B22, #32CD32);
+            top: 50%;
+            right: -8px;
+        }
+
+        .player-piece.player7 {
+            background: linear-gradient(45deg, #FF8C00, #FF4500);
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+        }
+
+        .question-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid #e9ecef;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .question-panel.active {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9, #d4edda);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .question-icon {
+            font-size: 1.3rem;
+            margin-right: 10px;
+        }
+
+        .mascot-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .pitbull-mascot {
+            width: 120px;
+            height: 120px;
+            animation: playfulBounce 2s infinite ease-in-out;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+
+        .pitbull-mascot.happy {
+            animation: happyWiggle 1s ease-in-out;
+        }
+
+        .pitbull-mascot.sad {
+            animation: sadShake 0.8s ease-in-out;
+        }
+
+        @keyframes playfulBounce {
+            0%, 100% { 
+                transform: translateY(0px) rotate(-2deg) scale(1); 
+                filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+            }
+            25% { 
+                transform: translateY(-12px) rotate(1deg) scale(1.05); 
+                filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
+            }
+            50% { 
+                transform: translateY(-8px) rotate(2deg) scale(1.1); 
+                filter: drop-shadow(0 10px 25px rgba(0,0,0,0.4));
+            }
+            75% { 
+                transform: translateY(-4px) rotate(-1deg) scale(1.05); 
+                filter: drop-shadow(0 6px 18px rgba(0,0,0,0.25));
+            }
+        }
+
+        @keyframes happyWiggle {
+            0% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg) brightness(1); }
+            15% { transform: scale(1.15) rotate(-8deg); filter: hue-rotate(10deg) brightness(1.1); }
+            30% { transform: scale(1.2) rotate(8deg); filter: hue-rotate(-10deg) brightness(1.2); }
+            45% { transform: scale(1.1) rotate(-5deg); filter: hue-rotate(15deg) brightness(1.15); }
+            60% { transform: scale(1.25) rotate(5deg); filter: hue-rotate(-5deg) brightness(1.3); }
+            75% { transform: scale(1.05) rotate(-3deg); filter: hue-rotate(8deg) brightness(1.1); }
+            90% { transform: scale(1.1) rotate(2deg); filter: hue-rotate(-3deg) brightness(1.05); }
+            100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg) brightness(1); }
+        }
+
+        @keyframes sadShake {
+            0%, 100% { 
+                transform: translateX(0) scale(1); 
+                filter: grayscale(0%) brightness(1);
+            }
+            10% { 
+                transform: translateX(-8px) scale(0.95); 
+                filter: grayscale(20%) brightness(0.9);
+            }
+            20% { 
+                transform: translateX(8px) scale(0.98); 
+                filter: grayscale(30%) brightness(0.85);
+            }
+            30% { 
+                transform: translateX(-6px) scale(0.96); 
+                filter: grayscale(25%) brightness(0.88);
+            }
+            40% { 
+                transform: translateX(6px) scale(0.99); 
+                filter: grayscale(15%) brightness(0.92);
+            }
+            50% { 
+                transform: translateX(-4px) scale(0.97); 
+                filter: grayscale(35%) brightness(0.8);
+            }
+            60% { 
+                transform: translateX(4px) scale(1.01); 
+                filter: grayscale(20%) brightness(0.9);
+            }
+            70% { 
+                transform: translateX(-2px) scale(0.98); 
+                filter: grayscale(10%) brightness(0.95);
+            }
+            80% { 
+                transform: translateX(2px) scale(1.02); 
+                filter: grayscale(5%) brightness(0.98);
+            }
+        }
+
+        .speech-bubble {
+            position: absolute;
+            background: white;
+            border: 3px solid #FF69B4;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #FF1493;
+            top: -10px;
+            left: 140px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-right-color: #FF69B4;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .current-question {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.6;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .answer-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .answer-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            border: 3px solid #007bff;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+
+        .answer-option {
+            padding: 20px;
+            border: 3px solid #007bff;
+            background: white;
+            color: #007bff;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-option:hover {
+            background: #007bff;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,123,255,0.3);
+        }
+
+        .answer-option.correct {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border-color: #28a745;
+            color: white;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .answer-option.incorrect {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border-color: #dc3545;
+            color: white;
+            animation: incorrectShake 0.6s ease;
+        }
+
+        @keyframes correctPulse {
+            0% { 
+                transform: scale(1) rotate(0deg); 
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+                filter: brightness(1);
+            }
+            25% { 
+                transform: scale(1.1) rotate(2deg); 
+                box-shadow: 0 10px 30px rgba(40, 167, 69, 0.6);
+                filter: brightness(1.2);
+            }
+            50% { 
+                transform: scale(1.15) rotate(-1deg); 
+                box-shadow: 0 15px 40px rgba(40, 167, 69, 0.8);
+                filter: brightness(1.4);
+            }
+            75% { 
+                transform: scale(1.08) rotate(1deg); 
+                box-shadow: 0 12px 35px rgba(40, 167, 69, 0.7);
+                filter: brightness(1.3);
+            }
+            100% { 
+                transform: scale(1) rotate(0deg); 
+                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+                filter: brightness(1.1);
+            }
+        }
+
+        @keyframes incorrectShake {
+            0%, 100% { 
+                transform: translateX(0) scale(1); 
+                filter: brightness(1);
+            }
+            10% { 
+                transform: translateX(-8px) scale(0.98) rotate(-2deg); 
+                filter: brightness(0.9);
+            }
+            20% { 
+                transform: translateX(8px) scale(1.02) rotate(2deg); 
+                filter: brightness(0.8);
+            }
+            30% { 
+                transform: translateX(-6px) scale(0.99) rotate(-1deg); 
+                filter: brightness(0.85);
+            }
+            40% { 
+                transform: translateX(6px) scale(1.01) rotate(1deg); 
+                filter: brightness(0.9);
+            }
+            50% { 
+                transform: translateX(-4px) scale(0.97) rotate(-1deg); 
+                filter: brightness(0.75);
+            }
+            60% { 
+                transform: translateX(4px) scale(1.03) rotate(1deg); 
+                filter: brightness(0.85);
+            }
+            70% { 
+                transform: translateX(-2px) scale(0.99) rotate(0deg); 
+                filter: brightness(0.9);
+            }
+            80% { 
+                transform: translateX(2px) scale(1.01) rotate(0deg); 
+                filter: brightness(0.95);
+            }
+        }
+
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #dee2e6;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .winner-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .winner-content {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 500px;
+            animation: celebrationBounce 0.8s ease;
+        }
+
+        @keyframes celebrationBounce {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .add-question-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid #e9ecef;
+            margin-top: 25px;
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        @media (max-width: 1200px) {
+            .players-section {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .board-path {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .answers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .players-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header class="header">
+            <h1>🐕 Pet Master 🐱</h1>
+            <div class="subtitle">Capacitación Interactiva para Tienda de Mascotas - Equipo Completo (7 Jugadores)</div>
+            <div style="margin-top: 15px; font-size: 0.9rem; opacity: 0.9;">
+                💡 <strong>¿Cómo jugar con amigos?</strong> Comparte el enlace después de hacer clic en "Use in a design" → "Publish website"
+            </div>
+        </header>
+
+        <main class="game-board">
+            <div class="players-section">
+                <div class="player-card player1-card active" id="player1Card">
+                    <div class="player-avatar">🐧</div>
+                    <h3>Junitte</h3>
+                    <p><strong>Pos:</strong> <span id="player1Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player1Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">🤓 Competitiva</p>
+                </div>
+                <div class="player-card player2-card" id="player2Card">
+                    <div class="player-avatar">🦁</div>
+                    <h3>David Guerrero</h3>
+                    <p><strong>Pos:</strong> <span id="player2Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player2Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">🧠 Gerente Experto</p>
+                </div>
+                <div class="player-card player3-card" id="player3Card">
+                    <div class="player-avatar">🐱</div>
+                    <h3>Ruth</h3>
+                    <p><strong>Pos:</strong> <span id="player3Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player3Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">👑 Jefa Directa</p>
+                </div>
+                <div class="player-card player4-card" id="player4Card">
+                    <div class="player-avatar">🐰</div>
+                    <h3>Isaac</h3>
+                    <p><strong>Pos:</strong> <span id="player4Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player4Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">😄 Carismático</p>
+                </div>
+                <div class="player-card player5-card" id="player5Card">
+                    <div class="player-avatar">🐍</div>
+                    <h3>Omar</h3>
+                    <p><strong>Pos:</strong> <span id="player5Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player5Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">🧐 Inteligente</p>
+                </div>
+                <div class="player-card player6-card" id="player6Card">
+                    <div class="player-avatar">🐢</div>
+                    <h3>Natali</h3>
+                    <p><strong>Pos:</strong> <span id="player6Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player6Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">😌 Tranquila</p>
+                </div>
+                <div class="player-card player7-card" id="player7Card">
+                    <div class="player-avatar">🦊</div>
+                    <h3>Coco</h3>
+                    <p><strong>Pos:</strong> <span id="player7Position">0</span>/40</p>
+                    <p><strong>Pts:</strong> <span id="player7Score">0</span></p>
+                    <p style="font-size: 0.7rem; color: #666;">🧠 Líder Natural</p>
+                </div>
+            </div>
+
+            <div class="interactive-board">
+                <div class="park-animals park-animal-1">🐕</div>
+                <div class="park-animals park-animal-2">🐱</div>
+                <div class="park-animals park-animal-3">🐶</div>
+                <div class="park-animals park-animal-4">🐈</div>
+                <div class="park-animals park-animal-5">🦮</div>
+                <div class="park-animals park-animal-6">🐕‍🦺</div>
+                <div class="board-path" id="gamePath">
+                    <!-- Las casillas se generan dinámicamente -->
+                </div>
+            </div>
+
+            <div class="question-panel active" id="questionPanel">
+                <div class="question-header">
+                    <span class="question-icon">🎯</span>
+                    <span>Centro de Capacitación</span>
+                </div>
+                <div class="mascot-container">
+                    <svg class="pitbull-mascot" id="pitbullMascot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Cuerpo -->
+                        <ellipse cx="100" cy="140" rx="45" ry="35" fill="#D2B48C"/>
+                        
+                        <!-- Cabeza -->
+                        <circle cx="100" cy="80" r="40" fill="#DEB887"/>
+                        
+                        <!-- Orejas -->
+                        <ellipse cx="75" cy="55" rx="12" ry="20" fill="#CD853F" transform="rotate(-30 75 55)"/>
+                        <ellipse cx="125" cy="55" rx="12" ry="20" fill="#CD853F" transform="rotate(30 125 55)"/>
+                        
+                        <!-- Ojos verdes brillantes -->
+                        <circle cx="88" cy="75" r="8" fill="white"/>
+                        <circle cx="112" cy="75" r="8" fill="white"/>
+                        <circle cx="88" cy="75" r="6" fill="#32CD32"/>
+                        <circle cx="112" cy="75" r="6" fill="#32CD32"/>
+                        <circle cx="90" cy="73" r="2" fill="white"/>
+                        <circle cx="114" cy="73" r="2" fill="white"/>
+                        
+                        <!-- Hocico -->
+                        <ellipse cx="100" cy="95" rx="15" ry="12" fill="#F5DEB3"/>
+                        
+                        <!-- Nariz -->
+                        <ellipse cx="100" cy="90" rx="4" ry="3" fill="#8B4513"/>
+                        
+                        <!-- Boca sonriente -->
+                        <path d="M 85 100 Q 100 110 115 100" stroke="#8B4513" stroke-width="2" fill="none"/>
+                        
+                        <!-- Lengua juguetona -->
+                        <ellipse cx="105" cy="105" rx="8" ry="4" fill="#FF69B4"/>
+                        
+                        <!-- Collar -->
+                        <ellipse cx="100" cy="115" rx="25" ry="8" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+                        
+                        <!-- Placa del collar con nombre -->
+                        <ellipse cx="100" cy="115" rx="12" ry="6" fill="#FFD700" stroke="#FFA500" stroke-width="1"/>
+                        <text x="100" y="118" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#8B4513">ASHE</text>
+                        
+                        <!-- Patas -->
+                        <ellipse cx="70" cy="170" rx="8" ry="15" fill="#DEB887"/>
+                        <ellipse cx="90" cy="170" rx="8" ry="15" fill="#DEB887"/>
+                        <ellipse cx="110" cy="170" rx="8" ry="15" fill="#DEB887"/>
+                        <ellipse cx="130" cy="170" rx="8" ry="15" fill="#DEB887"/>
+                        
+                        <!-- Cola moviéndose -->
+                        <path d="M 145 130 Q 160 120 155 100" stroke="#CD853F" stroke-width="8" fill="none" stroke-linecap="round">
+                            <animateTransform attributeName="transform" type="rotate" values="0 145 130; 15 145 130; -15 145 130; 0 145 130" dur="1s" repeatCount="indefinite"/>
+                        </path>
+                        
+                        <!-- Manchas de color miel -->
+                        <circle cx="120" cy="70" r="6" fill="#F4A460" opacity="0.7"/>
+                        <circle cx="80" cy="85" r="4" fill="#F4A460" opacity="0.7"/>
+                        <ellipse cx="110" cy="140" rx="8" ry="6" fill="#F4A460" opacity="0.7"/>
+                    </svg>
+                    <div class="speech-bubble" id="speechBubble">¡Woof! ¡Vamos a aprender!</div>
+                </div>
+                <div class="current-question" id="currentQuestion">
+                    ¡Bienvenidos a la capacitación Petco Express Bucerías! 
+                    Haz clic en "Nueva Pregunta" para comenzar el entrenamiento del equipo completo.
+                </div>
+                <div class="answers-grid" id="answersGrid" style="display: none;">
+                    <!-- Las respuestas se generan dinámicamente -->
+                </div>
+                <div class="controls-section">
+                    <button class="game-btn btn-primary" onclick="nextQuestion()">
+                        🎲 Nueva Pregunta
+                    </button>
+                    <button class="game-btn btn-info" onclick="resetGame()">
+                        🔄 Reiniciar Juego
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalQuestions">5</div>
+                    <div class="stat-label">Preguntas Disponibles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="currentRound">1</div>
+                    <div class="stat-label">Ronda Actual</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="questionsAnswered">0</div>
+                    <div class="stat-label">Preguntas Respondidas</div>
+                </div>
+            </div>
+
+            <div class="add-question-modal" id="addQuestionModal">
+                <h3>🎓 Agregar Nueva Pregunta de Capacitación</h3>
+                <form onsubmit="addNewQuestion(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="newQuestion">Pregunta sobre Nutrición:</label>
+                        <textarea class="form-textarea" id="newQuestion" rows="3" required 
+                                placeholder="Ej: ¿Cuál es el principal nutriente que necesitan los cachorros para su crecimiento?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="answer1">Opción A:</label>
+                        <input class="form-input" type="text" id="answer1" required placeholder="Primera opción de respuesta">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="answer2">Opción B:</label>
+                        <input class="form-input" type="text" id="answer2" required placeholder="Segunda opción de respuesta">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="answer3">Opción C:</label>
+                        <input class="form-input" type="text" id="answer3" required placeholder="Tercera opción de respuesta">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="correctAnswer">Respuesta Correcta:</label>
+                        <select class="form-select" id="correctAnswer" required>
+                            <option value="">Selecciona la respuesta correcta</option>
+                            <option value="0">Opción A</option>
+                            <option value="1">Opción B</option>
+                            <option value="2">Opción C</option>
+                        </select>
+                    </div>
+                    <div class="controls-section">
+                        <button type="submit" class="game-btn btn-success">✅ Agregar Pregunta</button>
+                        <button type="button" class="game-btn btn-primary" onclick="toggleAddQuestion()">❌ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div class="winner-celebration" id="winnerCelebration">
+        <div class="winner-content">
+            <h2 id="winnerText">🎉 ¡Felicitaciones! 🎉</h2>
+            <p id="winnerMessage"></p>
+            <button class="game-btn btn-success" onclick="closeWinnerModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        // Estado del juego para 7 jugadores
+        let gameState = {
+            currentPlayer: 1,
+            totalPlayers: 7,
+            positions: [0, 0, 0, 0, 0, 0, 0], // Posiciones de los 7 jugadores
+            scores: [0, 0, 0, 0, 0, 0, 0], // Puntuaciones de los 7 jugadores
+            currentQuestionIndex: 0,
+            gameEnded: false,
+            waitingForAnswer: false,
+            questionsAnswered: 0,
+            currentRound: 1
+        };
+
+        // Avatares para cada jugador del equipo
+        const playerAvatars = ['🐧', '🦁', '🐱', '🐰', '🐍', '🐢', '🦊'];
+        const playerNames = ['Junitte', 'David Guerrero', 'Ruth', 'Isaac', 'Omar', 'Natali', 'Coco'];
+
+        // Mensajes de la mascota
+        const mascotMessages = {
+            welcome: "¡Woof! ¡Vamos a aprender!",
+            question: "¡Piensa bien! 🤔",
+            correct: "¡Muy bien! ¡Eres genial! 🎉",
+            incorrect: "¡No te preocupes! ¡Sigue intentando! 💪",
+            winner: "¡Felicidades campeón! 🏆"
+        };
+
+        // Preguntas de nutrición para mascotas
+        let nutritionQuestions = [
+            // Principios básicos de nutrición
+            {
+                question: "¿Qué organizaciones avalan los alimentos para mascotas?",
+                answers: ["AAFCO (EE.UU./Canadá), SADER/SAGARPA (México) y FEDIAF (Europa)", "FDA, WHO y UNESCO", "USDA, SENASICA y EFSA"],
+                correct: 0
+            },
+            {
+                question: "¿Qué es la nutrición?",
+                answers: ["El proceso de dar comida a las mascotas", "Ciencia que estudia los procesos por los cuales el alimento pasa en el cuerpo", "La cantidad de comida que necesita un animal"],
+                correct: 1
+            },
+            {
+                question: "¿Qué diferencia hay entre un ingrediente y un nutriente?",
+                answers: ["No hay diferencia, son lo mismo", "El ingrediente es el elemento del alimento (pollo, cerdo, chícharo), y el nutriente es la molécula que nutre la célula", "El ingrediente es más importante que el nutriente"],
+                correct: 1
+            },
+            {
+                question: "¿Cuáles son los macronutrientes?",
+                answers: ["Vitaminas, minerales y agua", "Proteínas, carbohidratos y grasas", "Calcio, fósforo y magnesio"],
+                correct: 1
+            },
+            {
+                question: "¿Cuáles son los micronutrientes?",
+                answers: ["Proteínas y carbohidratos", "Vitaminas y minerales", "Grasas y fibra"],
+                correct: 1
+            },
+            
+            // Nutrición de gatos
+            {
+                question: "¿Qué tipo de carnívoro es el gato?",
+                answers: ["Carnívoro opcional", "Carnívoro estricto — debe comer carne obligatoriamente", "Omnívoro como los perros"],
+                correct: 1
+            },
+            {
+                question: "¿Qué función tiene la taurina en gatos?",
+                answers: ["Solo mejora el pelaje", "Ayuda al músculo cardíaco, salud visual y metabolismo de grasas", "Únicamente fortalece los huesos"],
+                correct: 1
+            },
+            {
+                question: "¿Qué aminoácido facilita la digestión de proteínas?",
+                answers: ["Taurina", "Arginina", "Lisina"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Grooming
+            {
+                question: "¿Qué herramienta se usa para desenredar el pelo largo en perros de raza mediana o grande?",
+                answers: ["Peine metálico de dientes largos", "Cepillo de cerdas suaves", "Rastrillo común de jardín"],
+                correct: 0
+            },
+            {
+                question: "¿Cada cuánto tiempo se recomienda bañar a un perro con piel sensible?",
+                answers: ["Cada semana con cualquier shampoo", "Cada 3 a 4 semanas con shampoo hipoalergénico", "Solo cuando esté muy sucio"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Alimento seco
+            {
+                question: "¿Cuál es el principal beneficio del alimento seco para perros adultos?",
+                answers: ["Solo es más barato", "Le ofrece una dieta con un apoyo nutrimental completo y balanceado. Ayuda a mantener dientes limpios y fortalece la mordida", "Únicamente sacia el hambre"],
+                correct: 1
+            },
+            {
+                question: "¿Qué proteínas podemos encontrar en las dietas de alimentación?",
+                answers: ["Solo vegetales procesados", "Pollo, cordero o salmón de alta calidad", "Únicamente subproductos cárnicos"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Premios
+            {
+                question: "¿Cuál es la principal función de los premios en el adiestramiento canino?",
+                answers: ["Solo alimentar al perro", "Reforzar conductas positivas", "Reemplazar las comidas principales"],
+                correct: 1
+            },
+            {
+                question: "¿Qué se debe revisar antes de comprar un premio para perros pequeños?",
+                answers: ["Solo el precio", "Tamaño y textura adecuada para su mordida", "Únicamente el sabor"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Tazones
+            {
+                question: "¿Por qué es mejor usar tazones de acero inoxidable?",
+                answers: ["Son más baratos", "Son más higiénicos y fáciles de limpiar", "Solo por estética"],
+                correct: 1
+            },
+            {
+                question: "¿Qué tipo de tazón se recomienda para perros de orejas largas?",
+                answers: ["Tazones muy anchos y bajos", "Tazones altos y estrechos para evitar que se mojen las orejas", "Cualquier tipo de tazón"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Multivitamínicos
+            {
+                question: "¿Para qué sirven los multivitamínicos en perros adultos?",
+                answers: ["Solo para engordar al perro", "Refuerzan el sistema inmunológico y aportan energía diaria", "Únicamente para el pelaje"],
+                correct: 1
+            },
+            {
+                question: "¿En qué casos se recomienda consultar al veterinario antes de darlos?",
+                answers: ["Nunca es necesario consultar", "Si el perro ya consume alimento balanceado o tiene tratamiento médico", "Solo si el perro está enfermo"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Alimento húmedo
+            {
+                question: "¿Cuál es el principal beneficio del alimento húmedo?",
+                answers: ["Solo es más caro", "Mejora la hidratación y palatabilidad", "Únicamente llena más"],
+                correct: 1
+            },
+            {
+                question: "¿Qué se debe hacer con la lata abierta de alimento húmedo?",
+                answers: ["Dejarla abierta a temperatura ambiente", "Guardarla en refrigeración y consumir en máximo 48 horas", "Tirarla inmediatamente"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Salud y belleza
+            {
+                question: "¿Por qué es importante limpiar las orejas del perro?",
+                answers: ["Solo por estética", "Previene infecciones y acumulación de cera", "No es necesario limpiarlas"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Desparasitantes
+            {
+                question: "¿Qué tipos de desparasitantes existen?",
+                answers: ["Solo tabletas", "Internos (tabletas) y externos (pipetas, collares, sprays)", "Únicamente inyecciones"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Juguetes
+            {
+                question: "¿Qué beneficios tienen los juguetes de masticar?",
+                answers: ["Solo entretienen", "Fortalecen mandíbula y reducen el estrés", "Únicamente desgastan los dientes"],
+                correct: 1
+            },
+            {
+                question: "¿Qué tipo de juguete se recomienda para cachorros en dentición?",
+                answers: ["Juguetes muy duros", "Juguetes suaves o de goma para aliviar encías", "Cualquier objeto que encuentren"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Nutrición
+            {
+                question: "¿Qué nutrientes son esenciales en toda dieta canina?",
+                answers: ["Solo proteína", "Proteína, grasa, carbohidratos, vitaminas y minerales", "Únicamente carbohidratos"],
+                correct: 1
+            },
+            
+            // 🐶 PERROS - Correas
+            {
+                question: "¿Qué tipo de correa se recomienda para entrenamiento básico?",
+                answers: ["Correa extensible muy larga", "Correa corta de 1.20 m de nylon o cuero", "Cadena metálica pesada"],
+                correct: 1
+            },
+            {
+                question: "¿Por qué no se recomienda usar extensibles en perros grandes?",
+                answers: ["Son muy caras", "Pueden perder control y causar tirones bruscos", "Solo por estética"],
+                correct: 1
+            },
+            
+            // 🐱 GATOS - Hidratación y digestión
+            {
+                question: "¿Por qué los gatos deben tener siempre agua disponible y purificada todo el tiempo?",
+                answers: ["Solo por comodidad", "Para evitar deshidratación y problemas urinarios", "No es tan importante"],
+                correct: 1
+            },
+            {
+                question: "¿Qué ingrediente suele mejorar la digestión en gatos?",
+                answers: ["Azúcar refinada", "La fibra de arroz o pulpa de remolacha", "Colorantes artificiales"],
+                correct: 1
+            },
+            
+            // 🐱 GATOS - Alimento húmedo
+            {
+                question: "¿Qué beneficio aporta el alimento húmedo en gatos?",
+                answers: ["Solo es más caro", "Aumenta la hidratación y mejora la palatabilidad", "Únicamente llena el estómago"],
+                correct: 1
+            },
+            {
+                question: "¿Qué se debe revisar en la etiqueta del alimento húmedo?",
+                answers: ["Solo el precio", "El primer ingrediente debe ser carne o pescado", "Únicamente la fecha de caducidad"],
+                correct: 1
+            },
+            
+            // 🐱 GATOS - Premios
+            {
+                question: "¿Cuál es la función principal de los premios para gato?",
+                answers: ["Solo alimentar", "Reforzar el vínculo y recompensar conductas positivas", "Reemplazar las comidas"],
+                correct: 1
+            },
+            {
+                question: "¿Qué hay que cuidar al ofrecer premios a diario?",
+                answers: ["Dar todos los que quiera", "No superar el 10% de su ingesta calórica diaria", "Solo dárselos una vez al mes"],
+                correct: 1
+            },
+            
+            // 🐱 GATOS - Arenas
+            {
+                question: "¿Qué tipo de arena facilita la limpieza del arenero?",
+                answers: ["Arena de playa común", "Arena aglutinante", "Tierra del jardín"],
+                correct: 1
+            },
+            {
+                question: "¿Cada cuánto se recomienda cambiar la arena por completo?",
+                answers: ["Una vez al mes", "Cada 7 a 10 días, dependiendo del uso", "Solo cuando huela mal"],
+                correct: 1
+            },
+            
+            // 🐱 GATOS - Repelentes
+            {
+                question: "¿Para qué se usan los repelentes felinos?",
+                answers: ["Para bañar al gato", "Para evitar que marquen o arañen ciertas zonas", "Para perfumar el ambiente"],
+                correct: 1
+            },
+            {
+                question: "¿Dónde no debe aplicarse un repelente?",
+                answers: ["En las plantas", "Directamente sobre el gato o su cama", "En los muebles"],
+                correct: 1
+            },
+            
+            // 🐱 GATOS - Salud y belleza
+            {
+                question: "¿Cada cuánto se debe cepillar a un gato de pelo largo?",
+                answers: ["Una vez al mes", "Diario o al menos 3 veces por semana", "Solo cuando se vea sucio"],
+                correct: 1
+            },
+            
+            // Preguntas originales
+            {
+                question: "¿Cuál es el nutriente más importante en la dieta de un cachorro en crecimiento?",
+                answers: ["Proteínas", "Carbohidratos", "Grasas"],
+                correct: 0
+            },
+            {
+                question: "¿Qué alimento es tóxico para los gatos y nunca debe dárseles?",
+                answers: ["Pollo cocido", "Cebolla", "Arroz"],
+                correct: 1
+            },
+            {
+                question: "¿Cuántas veces al día debe comer un gato adulto sano?",
+                answers: ["1 vez", "2-3 veces", "5-6 veces"],
+                correct: 1
+            },
+            {
+                question: "¿Qué porcentaje de proteína debe tener el alimento para perros adultos activos?",
+                answers: ["15-18%", "22-25%", "35-40%"],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es la principal diferencia nutricional entre perros y gatos?",
+                answers: ["Los gatos necesitan más carbohidratos", "Los gatos son carnívoros obligados", "No hay diferencias"],
+                correct: 1
+            }
+        ];
+
+        // Iconos para las casillas especiales
+        const cellIcons = {
+            start: "🏠",
+            finish: "🏆",
+            normal: "🦴",
+            special: "❤️",
+            bonus: "⭐"
+        };
+
+        // Función para mostrar mensaje de la mascota
+        function showMascotMessage(message, isCorrect = null) {
+            const speechBubble = document.getElementById('speechBubble');
+            const mascot = document.getElementById('pitbullMascot');
+            
+            speechBubble.textContent = message;
+            speechBubble.classList.add('show');
+            
+            if (isCorrect === true) {
+                mascot.classList.add('happy');
+                setTimeout(() => mascot.classList.remove('happy'), 1000);
+            } else if (isCorrect === false) {
+                mascot.classList.add('sad');
+                setTimeout(() => mascot.classList.remove('sad'), 800);
+            }
+            
+            setTimeout(() => {
+                speechBubble.classList.remove('show');
+            }, 3000);
+        }
+
+        // Inicializar el tablero
+        function initializeBoard() {
+            const path = document.getElementById('gamePath');
+            path.innerHTML = '';
+            
+            for (let i = 0; i <= 40; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'path-cell';
+                cell.id = `cell-${i}`;
+                
+                let cellType = 'normal';
+                let icon = cellIcons.normal;
+                
+                if (i === 0) {
+                    cellType = 'start';
+                    icon = cellIcons.start;
+                    cell.classList.add('start');
+                } else if (i === 40) {
+                    cellType = 'finish';
+                    icon = cellIcons.finish;
+                    cell.classList.add('finish');
+                } else if (i % 6 === 0) {
+                    cellType = 'special';
+                    icon = cellIcons.special;
+                    cell.classList.add('special');
+                } else if (i % 8 === 0) {
+                    cellType = 'bonus';
+                    icon = cellIcons.bonus;
+                    cell.classList.add('bonus');
+                }
+                
+                cell.innerHTML = `
+                    <div class="cell-icon">${icon}</div>
+                    <div class="cell-number">${i === 0 ? 'INICIO' : i === 40 ? 'META' : i}</div>
+                `;
+                
+                path.appendChild(cell);
+            }
+            
+            updatePlayerPositions();
+            updateStats();
+            showMascotMessage(mascotMessages.welcome);
+        }
+
+        // Actualizar posiciones de jugadores
+        function updatePlayerPositions() {
+            // Limpiar piezas anteriores
+            document.querySelectorAll('.player-piece').forEach(piece => piece.remove());
+            
+            // Agregar piezas de todos los jugadores
+            for (let i = 0; i < gameState.totalPlayers; i++) {
+                if (gameState.positions[i] <= 40) {
+                    const cell = document.getElementById(`cell-${gameState.positions[i]}`);
+                    const piece = document.createElement('div');
+                    piece.className = `player-piece player${i + 1}`;
+                    piece.textContent = playerAvatars[i];
+                    cell.appendChild(piece);
+                }
+                
+                // Actualizar información en las tarjetas
+                document.getElementById(`player${i + 1}Position`).textContent = gameState.positions[i];
+                document.getElementById(`player${i + 1}Score`).textContent = gameState.scores[i];
+            }
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            document.getElementById('totalQuestions').textContent = nutritionQuestions.length;
+            document.getElementById('currentRound').textContent = gameState.currentRound;
+            document.getElementById('questionsAnswered').textContent = gameState.questionsAnswered;
+        }
+
+        // Cambiar turno
+        function switchPlayer() {
+            gameState.currentPlayer = (gameState.currentPlayer % gameState.totalPlayers) + 1;
+            
+            // Actualizar tarjetas activas
+            for (let i = 1; i <= gameState.totalPlayers; i++) {
+                document.getElementById(`player${i}Card`).classList.toggle('active', i === gameState.currentPlayer);
+            }
+        }
+
+        // Mostrar nueva pregunta
+        function nextQuestion() {
+            if (gameState.gameEnded || gameState.waitingForAnswer) return;
+            
+            if (nutritionQuestions.length === 0) {
+                document.getElementById('currentQuestion').textContent = 
+                    "¡Excelente! Han completado todas las preguntas disponibles. Agreguen más preguntas para continuar la capacitación.";
+                showMascotMessage("¡Necesitamos más preguntas para seguir jugando! 📚");
+                return;
+            }
+            
+            gameState.currentQuestionIndex = Math.floor(Math.random() * nutritionQuestions.length);
+            const question = nutritionQuestions[gameState.currentQuestionIndex];
+            
+            document.getElementById('currentQuestion').textContent = 
+                `Turno de ${playerNames[gameState.currentPlayer - 1]}: ${question.question}`;
+            
+            const answersGrid = document.getElementById('answersGrid');
+            answersGrid.innerHTML = '';
+            answersGrid.style.display = 'grid';
+            answersGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            
+            question.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.className = 'answer-option';
+                button.textContent = `${String.fromCharCode(65 + index)}. ${answer}`;
+                button.onclick = () => selectAnswer(index);
+                answersGrid.appendChild(button);
+            });
+            
+            gameState.waitingForAnswer = true;
+            
+            // Ashe se ríe traviesamente cuando empezamos a jugar
+            const laughMessages = [
+                "¡Jajaja! ¿A ver quién sabe más? 😏",
+                "¡Woof woof! ¡Esto se pone interesante! 😈",
+                "¡Ja! ¿Creen que es fácil? 🤭",
+                "¡Guau guau! ¡Veamos qué tan listos son! 😂",
+                "¡Jeje! ¡Yo ya sé la respuesta! 😎"
+            ];
+            const randomLaugh = laughMessages[Math.floor(Math.random() * laughMessages.length)];
+            showMascotMessage(randomLaugh);
+        }
+
+        // Seleccionar respuesta
+        function selectAnswer(selectedIndex) {
+            if (!gameState.waitingForAnswer) return;
+            
+            const question = nutritionQuestions[gameState.currentQuestionIndex];
+            const buttons = document.querySelectorAll('.answer-option');
+            
+            buttons.forEach((button, index) => {
+                if (index === question.correct) {
+                    button.classList.add('correct');
+                } else if (index === selectedIndex && index !== question.correct) {
+                    button.classList.add('incorrect');
+                }
+                button.onclick = null;
+            });
+            
+            gameState.questionsAnswered++;
+            const playerIndex = gameState.currentPlayer - 1;
+            
+            setTimeout(() => {
+                if (selectedIndex === question.correct) {
+                    // Respuesta correcta
+                    const advancement = 3;
+                    const points = 15;
+                    
+                    gameState.positions[playerIndex] = Math.min(40, gameState.positions[playerIndex] + advancement);
+                    gameState.scores[playerIndex] += points;
+                    
+                    document.getElementById('currentQuestion').textContent = 
+                        `¡Excelente conocimiento! ${playerNames[gameState.currentPlayer - 1]} avanza ${advancement} casillas y gana ${points} puntos.`;
+                    
+                    showMascotMessage(mascotMessages.correct, true);
+                } else {
+                    // Respuesta incorrecta
+                    const retreat = 1;
+                    
+                    gameState.positions[playerIndex] = Math.max(0, gameState.positions[playerIndex] - retreat);
+                    
+                    document.getElementById('currentQuestion').textContent = 
+                        `${playerNames[gameState.currentPlayer - 1]} necesita repasar ese tema. Retrocede ${retreat} casilla. ¡Sigue estudiando!`;
+                    
+                    showMascotMessage(mascotMessages.incorrect, false);
+                }
+                
+                updatePlayerPositions();
+                updateStats();
+                checkWinner();
+                
+                if (!gameState.gameEnded) {
+                    switchPlayer();
+                }
+                
+                document.getElementById('answersGrid').style.display = 'none';
+                gameState.waitingForAnswer = false;
+            }, 2500);
+        }
+
+
+
+        // Verificar ganador
+        function checkWinner() {
+            for (let i = 0; i < gameState.totalPlayers; i++) {
+                if (gameState.positions[i] >= 40) {
+                    showWinner(i + 1);
+                    return;
+                }
+            }
+        }
+
+        // Mostrar ganador
+        function showWinner(playerNumber) {
+            gameState.gameEnded = true;
+            const celebration = document.getElementById('winnerCelebration');
+            const winnerText = document.getElementById('winnerText');
+            const winnerMessage = document.getElementById('winnerMessage');
+            
+            winnerText.textContent = `🎉 ¡${playerNames[playerNumber - 1]} Certificado! 🎉`;
+            winnerMessage.textContent = `${playerNames[playerNumber - 1]} ha completado exitosamente la capacitación en nutrición para mascotas. ¡Ahora está listo para asesorar a los clientes de la tienda!`;
+            
+            celebration.style.display = 'flex';
+            
+            document.getElementById('questionPanel').classList.remove('active');
+            showMascotMessage(mascotMessages.winner, true);
+        }
+
+        // Cerrar modal de ganador
+        function closeWinnerModal() {
+            document.getElementById('winnerCelebration').style.display = 'none';
+        }
+
+        // Reiniciar juego
+        function resetGame() {
+            gameState = {
+                currentPlayer: 1,
+                totalPlayers: 7,
+                positions: [0, 0, 0, 0, 0, 0, 0],
+                scores: [0, 0, 0, 0, 0, 0, 0],
+                currentQuestionIndex: 0,
+                gameEnded: false,
+                waitingForAnswer: false,
+                questionsAnswered: 0,
+                currentRound: gameState.currentRound + 1
+            };
+            
+            document.getElementById('currentQuestion').textContent = 
+                "¡Nueva ronda de capacitación iniciada! Haz clic en 'Nueva Pregunta' para continuar aprendiendo.";
+            
+            document.getElementById('answersGrid').style.display = 'none';
+            document.getElementById('questionPanel').classList.add('active');
+            
+            // Activar solo el primer jugador
+            for (let i = 1; i <= 7; i++) {
+                document.getElementById(`player${i}Card`).classList.toggle('active', i === 1);
+            }
+            
+            initializeBoard();
+        }
+
+        // Alternar formulario de agregar pregunta
+        function toggleAddQuestion() {
+            const modal = document.getElementById('addQuestionModal');
+            modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+            
+            if (modal.style.display === 'none') {
+                modal.querySelector('form').reset();
+            }
+        }
+
+        // Agregar nueva pregunta
+        function addNewQuestion(event) {
+            event.preventDefault();
+            
+            const newQuestion = {
+                question: document.getElementById('newQuestion').value,
+                answers: [
+                    document.getElementById('answer1').value,
+                    document.getElementById('answer2').value,
+                    document.getElementById('answer3').value
+                ],
+                correct: parseInt(document.getElementById('correctAnswer').value)
+            };
+            
+            nutritionQuestions.push(newQuestion);
+            
+            document.getElementById('currentQuestion').textContent = 
+                '¡Nueva pregunta de capacitación agregada exitosamente! El equipo ahora tiene más conocimiento para compartir.';
+            
+            updateStats();
+            toggleAddQuestion();
+            showMascotMessage("¡Genial! ¡Más preguntas para aprender! 📖");
+        }
+
+        // Función para agregar preguntas desde el chat
+        function addQuestionFromChat(questionText, correctAnswer, wrongAnswer1, wrongAnswer2) {
+            const answers = [correctAnswer, wrongAnswer1, wrongAnswer2];
+            // Mezclar las respuestas aleatoriamente
+            for (let i = answers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [answers[i], answers[j]] = [answers[j], answers[i]];
+            }
+            
+            const newQuestion = {
+                question: questionText,
+                answers: answers,
+                correct: answers.indexOf(correctAnswer)
+            };
+            
+            nutritionQuestions.push(newQuestion);
+            updateStats();
+            
+            return `✅ Pregunta agregada: "${questionText}" con respuesta correcta: "${correctAnswer}"`;
+        }
+
+        // Inicializar el juego
+        initializeBoard();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99334fce5018c915',t:'MTc2MTI0NDI5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
